@@ -172,6 +172,15 @@ AbstractMessageMatcher {
 
 	valueArray {arg args; ^this.value(*args) } // needed to work in FunctionLists
 
+	== { arg that;
+		^this.compareObject(that, #[\func])
+	}
+
+	hash {
+		^this.instVarHash(#[\func])
+	}
+
+	removeFunc { arg function; if(function == this) { ^nil } }
 }
 
 ///////////////////// OSC
@@ -354,6 +363,15 @@ OSCFuncAddrMessageMatcher : AbstractMessageMatcher {
 			func.value(msg, time, testAddr, recvPort)
 		})
 	}
+
+	== { arg that;
+		^this.compareObject(that, #[\func, \addr])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \addr])
+	}
+
 }
 
 // if you need to test for recvPort func gets wrapped in this
@@ -369,6 +387,15 @@ OSCFuncRecvPortMessageMatcher : AbstractMessageMatcher {
 			func.value(msg, time, addr, testRecvPort)
 		})
 	}
+
+	== { arg that;
+		^this.compareObject(that, #[\func, \recvPort])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \recvPort])
+	}
+
 }
 
 OSCFuncBothMessageMatcher : AbstractMessageMatcher {
@@ -383,6 +410,14 @@ OSCFuncBothMessageMatcher : AbstractMessageMatcher {
 			func.value(msg, time, testAddr, testRecvPort)
 		})
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \addr, \recvPort])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \addr, \recvPort])
+	}
+
 }
 
 OSCArgsMatcher : AbstractMessageMatcher {
@@ -398,6 +433,14 @@ OSCArgsMatcher : AbstractMessageMatcher {
 		});
 		func.value(testMsg, time, addr, recvPort)
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \argTemplate])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \argTemplate])
+	}
+
 }
 
 ///////////////////// MIDI
@@ -596,6 +639,14 @@ MIDISMPTEAssembler :  AbstractMessageMatcher {
 				func.value( mtctime, mtc_r, dropFrame, srcID );
 		});
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \mtctime, \mtc_t, \mtc_v, \mtc_r])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \mtctime, \mtc_t, \mtc_v, \mtc_r])
+	}
+
 
 }
 
@@ -1013,6 +1064,14 @@ MIDIFuncSrcMessageMatcher : AbstractMessageMatcher {
 	value {|value, num, chan, testSrc|
 		if(srcID == testSrc, {func.value(value, num, chan, testSrc)})
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \srcID])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \srcID])
+	}
+
 }
 
 // if you need to test for chan func gets wrapped in this
@@ -1026,6 +1085,14 @@ MIDIFuncChanMessageMatcher : AbstractMessageMatcher {
 	value {|value, num, testChan, srcID|
 		if(chan == testChan, {func.value(value, num, testChan, srcID)})
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \chan])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \chan])
+	}
+
 }
 
 // if you need to test for chanArray func gets wrapped in this
@@ -1045,6 +1112,15 @@ MIDIFuncChanArrayMessageMatcher : AbstractMessageMatcher {
 		// lookup bool by index fastest
 		if(chanBools[testChan], {func.value(value, num, testChan, srcID)})
 	}
+
+	== { arg that;
+		^this.compareObject(that, #[\func, \chanBools])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \chanBools])
+	}
+
 }
 
 // version for message types which don't pass a val
@@ -1081,6 +1157,15 @@ MIDIFuncBothMessageMatcher : AbstractMessageMatcher {
 	value {|value, num, testChan, testSrc|
 		if(srcID == testSrc and: {chan == testChan}, {func.value(value, num, testChan, testSrc)})
 	}
+
+	== { arg that;
+		^this.compareObject(that, #[\func, \chan, \srcID])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \chan, \srcID])
+	}
+
 }
 
 
@@ -1100,6 +1185,15 @@ MIDIFuncBothCAMessageMatcher : AbstractMessageMatcher {
 	value {|value, num, testChan, testSrc|
 		if(srcID == testSrc and: {chanBools[testChan]}, {func.value(value, num, testChan, testSrc)})
 	}
+
+	== { arg that;
+		^this.compareObject(that, #[\func, \chanBools, \srcID])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \chanBools, \srcID])
+	}
+
 }
 
 // if you want to test for the actual message value, the func gets wrapped in this
@@ -1113,4 +1207,12 @@ MIDIValueMatcher : AbstractMessageMatcher {
 	value {|...testMsg|
 		if(argTemplate.matchItem(testMsg.first), {func.value(*testMsg)});
 	}
+	== { arg that;
+		^this.compareObject(that, #[\func, \argTemplate])
+	}
+
+	hash {
+		^this.instVarHash(#[\func, \argTemplate])
+	}
+
 }
